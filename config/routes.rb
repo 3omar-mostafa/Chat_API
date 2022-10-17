@@ -12,6 +12,16 @@ Rails.application.routes.draw do
       patch "/:token" => "chat_applications#update"
       delete "/:token" => "chat_applications#destroy"
 
+      scope "/:token/chats" do
+
+        get "/" => "chats#index"
+        post "/" => "chats#create"
+        get "/:chat_id" => "chats#show"
+        put "/:chat_id" => "chats#update"
+        patch "/:chat_id" => "chats#update"
+        delete "/:chat_id" => "chats#destroy"
+
+      end
     end
 
   end
