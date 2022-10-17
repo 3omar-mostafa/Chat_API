@@ -21,6 +21,15 @@ Rails.application.routes.draw do
         patch "/:chat_id" => "chats#update"
         delete "/:chat_id" => "chats#destroy"
 
+        scope "/:chat_id/messages" do
+          get "/" => "messages#index"
+          post "/" => "messages#create"
+          get "/:message_id" => "messages#show"
+          put "/:message_id" => "messages#update"
+          patch "/:message_id" => "messages#update"
+          delete "/:message_id" => "messages#destroy"
+        end
+
       end
     end
 
