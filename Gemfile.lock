@@ -50,6 +50,10 @@ GEM
     chronic (0.10.2)
     concurrent-ruby (1.1.6)
     crass (1.0.2)
+    dotenv (2.8.1)
+    dotenv-rails (2.8.1)
+      dotenv (= 2.8.1)
+      railties (>= 3.2)
     elasticsearch (7.17.1)
       elasticsearch-api (= 7.17.1)
       elasticsearch-transport (= 7.17.1)
@@ -173,6 +177,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap (>= 1.1.0)
   byebug
+  dotenv-rails
   elasticsearch-model
   elasticsearch-rails
   listen (>= 3.0.5, < 3.2)

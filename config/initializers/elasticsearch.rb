@@ -1,12 +1,14 @@
 require 'elasticsearch'
 require 'elasticsearch/model'
 
-conf = {
-  host: ENV.fetch("ELASTIC_SEARCH_HOST", "localhost"),
-  port: ENV.fetch("ELASTIC_SEARCH_PORT", 9200)
-}
+if ENV['ELASTICSEARCH_URL'].blank?
+  conf = {
+    host: ENV['ELASTICSEARCH_HOST'],
+    port: ENV['ELASTICSEARCH_PORT']
+  }
 
-Elasticsearch::Model.client = Elasticsearch::Client.new(conf)
+  Elasticsearch::Model.client = Elasticsearch::Client.new(conf)
+end
 
 # Create Index for old data if does not exist
 unless Message.__elasticsearch__.index_exists?
