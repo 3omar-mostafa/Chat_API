@@ -19,6 +19,11 @@ gem 'puma', '~> 3.11'
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 
+# gem which allows writing and deploying cron jobs via config/schedule.rb
+# execute `bundle exec wheneverize .` to generate config/schedule.rb
+# `bundle exec whenever --update-crontab` to update crontab
+gem 'whenever', require: false
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
