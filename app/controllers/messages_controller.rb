@@ -6,7 +6,11 @@ class MessagesController < ApplicationController
 
   # GET /applications/:token/chats/:chat_id/messages
   def index
-    render json: @messages = @chat.messages, status: :ok
+    query = {
+      q: params[:q],
+      chat_id: @chat.id
+    }
+    render json: Message.search(query), status: :ok
   end
 
   # GET /applications/:token/chats/:chat_id/messages/:message_id
@@ -61,7 +65,7 @@ class MessagesController < ApplicationController
     end
 
     def params!(*args)
-      args = [:token, :chat_id, :message_id, :content] if args.empty?
+      args = [:token, :chat_id, :message_id, :content, :q] if args.empty?
       params.permit(*args)
     end
 
