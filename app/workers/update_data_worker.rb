@@ -1,6 +1,6 @@
 class UpdateDataWorker < ApplicationWorker
   def perform(klass, id, params)
-    Sidekiq::Logging.logger.info "Updated: #{klass} #{id} #{params}"
+    Sidekiq::Logging.logger.info "Updating: #{klass} #{id} #{params}"
     Sidekiq::Logging.logger.info "************************************************************"
 
     klass = eval klass

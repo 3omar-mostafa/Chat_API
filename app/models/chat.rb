@@ -6,6 +6,10 @@ class Chat < ApplicationRecord
 
   validates :name, presence: true
 
+  after_destroy_commit do |chat|
+    Redis.new.del(Message.redis_message_count_key(chat.id))
+  end
+
   def as_json(options)
     super(:only => [:chat_id, :name, :messages_count])
   end
@@ -22,10 +26,6 @@ class Chat < ApplicationRecord
 
   def self.redis_chat_count_key(chat_application_id)
     "#{ChatApplication.to_s}_#{chat_application_id}"
-  end
-
-  def delete_redis_data
-    Redis.new.del(Message.redis_message_count_key(self.id))
   end
 
 end

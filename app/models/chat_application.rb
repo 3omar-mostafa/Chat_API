@@ -6,6 +6,10 @@ class ChatApplication < ApplicationRecord
   validates :name, presence: true
   validates :token, presence: true, uniqueness: true
 
+  after_destroy_commit do |chat_app|
+    Redis.new.del(Chat.redis_chat_count_key(chat_app.id))
+  end
+
   def as_json(options)
     super(:only => [:token, :name, :chats_count])
   end
@@ -22,13 +26,6 @@ class ChatApplication < ApplicationRecord
 
   def self.get_next_id(params)
     return {}
-  end
-
-  def delete_redis_data
-    Redis.new.del(Chat.redis_chat_count_key(self.id))
-    self.chats.each do |chat|
-      chat.delete_redis_data
-    end
   end
 
 end

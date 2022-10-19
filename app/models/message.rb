@@ -68,7 +68,4 @@ class Message < ApplicationRecord
     "#{Chat.to_s}_#{chat_id}"
   end
 
-  def delete_redis_data
-  end
-
 end
