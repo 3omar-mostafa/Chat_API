@@ -52,7 +52,7 @@ class ChatsController < ApplicationController
       params.permit(*args)
     end
 
-    def require_params(args: :chat)
+    def require_params(args: :name)
       params.require(*args)
     end
 
