@@ -49,6 +49,7 @@ GEM
     byebug (11.1.1)
     chronic (0.10.2)
     concurrent-ruby (1.1.6)
+    connection_pool (2.2.2)
     crass (1.0.2)
     dotenv (2.8.1)
     dotenv-rails (2.8.1)
@@ -120,6 +121,8 @@ GEM
     rack (2.0.7)
     rack-cors (1.1.1)
       rack (>= 2.0.0)
+    rack-protection (2.0.8.1)
+      rack
     rack-test (0.7.0)
       rack (>= 1.0, < 3)
     rails (5.2.3)
@@ -149,7 +152,13 @@ GEM
     rake (13.0.1)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
+    redis (4.1.2)
     ruby2_keywords (0.0.5)
+    sidekiq (5.2.7)
+      connection_pool (~> 2.2, >= 2.2.2)
+      rack (>= 1.5.0)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.5, < 5)
     spring (2.1.0)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -185,6 +194,8 @@ DEPENDENCIES
   puma (~> 3.11)
   rack-cors
   rails (~> 5.2.3)
+  redis (~> 4.0)
+  sidekiq
   spring
   spring-watcher-listen (~> 2.0.0)
   tzinfo-data

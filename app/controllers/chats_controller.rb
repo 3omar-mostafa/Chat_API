@@ -16,30 +16,22 @@ class ChatsController < ApplicationController
   # POST /applications/:token/chats
   def create
     params[:chat_id] = get_next_chat_id
-    @chat = @chat_app.chats.new(params!(:name, :chat_id))
-    if @chat.save
-      @chat_app.chats_count += 1
-      @chat_app.save
-      render json: @chat, status: :created
-    else
-      render json: @chat.errors, status: :bad_request
-    end
+    params[:chat_application_id] = @chat_app.id
+    InsertDataWorker.perform_async(Chat.to_s, params!(:name, :chat_id, :chat_application_id))
+    chat = params!(:name, :chat_id)
+    render json: chat, status: :created
   end
 
   # PATCH/PUT /applications/:token/chats/:chat_id
   def update
-    if @chat.update(params!(:name))
-      render json: @chat, status: :ok
-    else
-      render json: @chat.errors, status: :bad_request
-    end
+    chat = params!(:name)
+    UpdateDataWorker.perform_async(Chat.to_s, @chat.id, chat)
+    render json: chat, status: :ok
   end
 
   # DELETE /applications/:token/chats/:chat_id
   def destroy
-    @chat.destroy
-    @chat_app.chats_count -= 1
-    @chat_app.save
+    DeleteDataWorker.perform_async(Chat.to_s, @chat.id)
     render json: { message: "Chat deleted" }, status: :ok
   end
 
