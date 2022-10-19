@@ -66,8 +66,7 @@ class MessagesController < ApplicationController
     end
 
     def get_next_message_id
-      #TODO: Change This to more efficient method
-      last = @chat.messages.last
-      last ? last.message_id + 1 : 1
+      Redis.new.incr(Message.redis_message_count_key(@chat.id))
     end
+
 end

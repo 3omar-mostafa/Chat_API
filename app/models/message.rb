@@ -64,5 +64,11 @@ class Message < ApplicationRecord
     result.map {|r| r[:_source]}
   end
 
+  def self.redis_message_count_key(chat_id)
+    "#{Chat.to_s}_#{chat_id}"
+  end
+
+  def delete_redis_data
+  end
 
 end

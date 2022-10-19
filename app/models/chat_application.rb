@@ -20,4 +20,15 @@ class ChatApplication < ApplicationRecord
     end
   end
 
+  def self.get_next_id(params)
+    return {}
+  end
+
+  def delete_redis_data
+    Redis.new.del(Chat.redis_chat_count_key(self.id))
+    self.chats.each do |chat|
+      chat.delete_redis_data
+    end
+  end
+
 end

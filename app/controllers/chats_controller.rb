@@ -57,8 +57,6 @@ class ChatsController < ApplicationController
     end
 
     def get_next_chat_id
-      #TODO: Change This to more efficient method
-      last = @chat_app.chats.last
-      last ? last.chat_id + 1 : 1
+      Redis.new.incr(Chat.redis_chat_count_key(@chat_app.id))
     end
 end

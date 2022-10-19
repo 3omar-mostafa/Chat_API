@@ -20,4 +20,12 @@ class Chat < ApplicationRecord
     end
   end
 
+  def self.redis_chat_count_key(chat_application_id)
+    "#{ChatApplication.to_s}_#{chat_application_id}"
+  end
+
+  def delete_redis_data
+    Redis.new.del(Message.redis_message_count_key(self.id))
+  end
+
 end
