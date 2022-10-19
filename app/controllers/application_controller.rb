@@ -31,4 +31,27 @@ class ApplicationController < ActionController::API
     super json: { status: "success", data: args[:json] }, status: args[:status]
   end
 
+  protected
+
+    def set_chat_application
+      @chat_app ||= ChatApplication.find_by_token(params[:token])
+      unless @chat_app
+        raise ActiveRecord::RecordNotFound, "Chat Application '#{params[:token]}' is not found"
+      end
+    end
+
+    def set_chat
+      @chat ||= @chat_app.chats.find_by_chat_id(params[:chat_id])
+      unless @chat
+        raise ActiveRecord::RecordNotFound, "Chat '#{params[:chat_id]}' is not found"
+      end
+    end
+
+    def set_message
+      @message ||= @chat.messages.find_by_message_id(params[:message_id])
+      unless @chat
+        raise ActiveRecord::RecordNotFound, "Message '#{params[:message_id]}' is not found"
+      end
+    end
+
 end

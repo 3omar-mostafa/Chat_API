@@ -37,10 +37,6 @@ class ChatApplicationsController < ApplicationController
 
   private
 
-    def set_chat_application
-      @chat_app ||= ChatApplication.find_by_token!(params[:token])
-    end
-
     def params!(*args)
       args = [:name, :token] if args.empty?
       params.permit(*args)
