@@ -10,8 +10,16 @@ if ENV['ELASTICSEARCH_URL'].blank?
   Elasticsearch::Model.client = Elasticsearch::Client.new(conf)
 end
 
+def database_exists?
+  ActiveRecord::Base.connection
+rescue ActiveRecord::NoDatabaseError
+  false
+else
+  true
+end
+
 # Create Index for old data if does not exist
-unless Message.__elasticsearch__.index_exists?
+if database_exists? and not Message.__elasticsearch__.index_exists?
   Message.__elasticsearch__.create_index!
   Message.__elasticsearch__.import
 end
