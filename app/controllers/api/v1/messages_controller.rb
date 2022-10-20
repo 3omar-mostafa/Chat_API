@@ -49,7 +49,7 @@ class Api::V1::MessagesController < Api::V1::ApplicationController
       params.permit(*args)
     end
 
-    def require_params(args: :content)
+    def require_params(args = :content)
       params.require(*args)
     end
 

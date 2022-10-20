@@ -10,7 +10,7 @@ class Chat < ApplicationRecord
     Redis.new.del(Message.redis_message_count_key(chat.id))
   end
 
-  def as_json(options)
+  def as_json(options = nil)
     super(:only => [:chat_id, :name, :messages_count])
   end
 

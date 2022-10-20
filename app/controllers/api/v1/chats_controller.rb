@@ -44,7 +44,7 @@ class Api::V1::ChatsController < Api::V1::ApplicationController
       params.permit(*args)
     end
 
-    def require_params(args: :name)
+    def require_params(args = :name)
       params.require(*args)
     end
 

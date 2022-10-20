@@ -18,19 +18,19 @@ class Message < ApplicationRecord
     end
   end
 
-  def as_json(options)
+  def as_json(options = {})
     if options[:only].blank?
       options[:only] = [:message_id, :content]
     end
     super(:only => options[:only])
   end
 
-  def as_indexed_json(_options: {})
+  def as_indexed_json(_options = {})
     _options[:only] = [:message_id, :content, :chat_id]
     as_json(_options)
   end
 
-  def self.search(query, options: {})
+  def self.search(query, options = {})
 
     if query[:q].blank?
       @search_definition = {
