@@ -6,9 +6,7 @@ class Api::V1::ApplicationController < ActionController::API
     @errors_map ||= ActionDispatch::ExceptionWrapper.rescue_responses
     status = :internal_server_error
 
-    if error.is_a?(ActionController::ParameterMissing)
-
-    elsif @errors_map.has_key?(error.class.name)
+    if @errors_map.has_key?(error.class.name)
       status = @errors_map[error.class.name]
     end
 

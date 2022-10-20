@@ -6,9 +6,6 @@ ruby '2.7.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.3'
 
-# Load .env file into ENV
-gem 'dotenv-rails', groups: [:development, :test]
-
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 # Use Puma as the app server
@@ -43,6 +40,13 @@ gem 'rack-cors'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  # Load .env file into ENV
+  gem 'dotenv-rails'
+
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+
+  gem 'rspec-sidekiq'
 end
 
 group :development do
