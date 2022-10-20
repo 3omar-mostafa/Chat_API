@@ -1,4 +1,4 @@
-class ApplicationController < ActionController::API
+class Api::V1::ApplicationController < ActionController::API
   ActionDispatch::PublicExceptions
   rescue_from Exception, with: :handle_error
 

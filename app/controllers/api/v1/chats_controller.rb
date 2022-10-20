@@ -1,4 +1,4 @@
-class ChatsController < ApplicationController
+class Api::V1::ChatsController < Api::V1::ApplicationController
   before_action :set_chat_application
   before_action :set_chat, only: [:show, :update, :destroy]
   before_action :require_params, only: [:create, :update]
