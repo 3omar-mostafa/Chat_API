@@ -13,6 +13,14 @@
 # it.
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+
+# Allow Sidekiq to process jobs immediately in the test suite
+# Redis is required for this to work, therefore used mock_redis
+require 'sidekiq/testing'
+Sidekiq::Testing.inline!
+
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
@@ -91,4 +99,14 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  # Mock Redis Server
+  require 'redis'
+  require 'mock_redis'
+
+  config.before(:each) do
+    mock = MockRedis.new
+    allow(Redis).to receive(:new).and_return(mock)
+  end
+
 end
