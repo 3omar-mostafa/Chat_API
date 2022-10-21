@@ -8,12 +8,6 @@ services:
       - docker/docker.env
     ports:
       - '3306:3306'
-    healthcheck:
-      test: 'mysqladmin ping -h localhost -u root -proot'
-      interval: 10s
-      timeout: 10s
-      retries: 10
-    
     volumes:
       - mariadb_data:/var/lib/mysql
     restart: always
@@ -25,19 +19,15 @@ services:
     container_name: 'elasticsearch'
     env_file:
       - docker/docker.env
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
     ports:
       - '9200:9200'
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     healthcheck:
-      test: 'curl -s -f http://elastic:elastic@localhost:9200/_cat/health >/dev/null || exit 1'
+      test: 'curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1'
       interval: 30s
-      timeout: 15s
-      retries: 10
+      timeout: 30s
+      retries: 15
     restart: always
     networks:
       - default
@@ -49,12 +39,12 @@ services:
     ports:
       - '6379:6379'
     volumes:
-        - redis_data:/data
+      - redis_data:/data
     healthcheck:
       test: 'redis-cli ping'
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 15s
+      timeout: 15s
+      retries: 15
     restart: always
     networks:
       - default
@@ -64,8 +54,10 @@ services:
     container_name: 'Sidekiq'
     command: /app/docker/entrypoints/sidekiq.sh
     depends_on:
+      mariadb:
+        condition: service_started
       elasticsearch:
-          condition: service_healthy
+        condition: service_healthy
       redis:
         condition: service_healthy
     volumes:
@@ -87,14 +79,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      mariadb:
-          condition: service_healthy
-      elasticsearch:
-          condition: service_healthy
-      redis:
-        condition: service_healthy
-      sidekiq:
-        condition: service_started
+      - sidekiq
     restart: always
     networks:
       - default

@@ -25,6 +25,8 @@ begin
   Message.__elasticsearch__.create_index!
   Message.__elasticsearch__.import
   end
-rescue
+rescue Exception => e
   puts "======================= Can not connect to elasticsearch ========================"
+  puts e.message
+  puts "================================================================================="
 end
