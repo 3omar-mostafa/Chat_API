@@ -19,7 +19,12 @@ else
 end
 
 # Create Index for old data if does not exist
-if database_exists? and not Message.__elasticsearch__.index_exists?
+
+begin
+  if database_exists? and not Message.__elasticsearch__.index_exists?
   Message.__elasticsearch__.create_index!
   Message.__elasticsearch__.import
+  end
+rescue
+  puts "======================= Can not connect to elasticsearch ========================"
 end

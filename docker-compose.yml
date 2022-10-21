@@ -1,0 +1,108 @@
+version: '3.9'
+
+services:
+  mariadb:
+    image: 'mariadb:10.8'
+    container_name: 'mariadb'
+    env_file:
+      - docker/docker.env
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: 'mysqladmin ping -h localhost -u root -proot'
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    restart: always
+    networks:
+      - default
+
+  elasticsearch:
+    image: 'elasticsearch:8.4.3'
+    container_name: 'elasticsearch'
+    env_file:
+      - docker/docker.env
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - '9200:9200'
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: 'curl -s -f http://elastic:elastic@localhost:9200/_cat/health >/dev/null || exit 1'
+      interval: 30s
+      timeout: 15s
+      retries: 10
+    restart: always
+    networks:
+      - default
+
+  redis:
+    image: 'redis:7.0-alpine'
+    container_name: 'redis'
+    command: 'redis-server --appendonly yes'
+    ports:
+      - '6379:6379'
+    volumes:
+        - redis_data:/data
+    healthcheck:
+      test: 'redis-cli ping'
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+    networks:
+      - default
+
+  sidekiq:
+    build: .
+    container_name: 'Sidekiq'
+    command: /app/docker/entrypoints/sidekiq.sh
+    depends_on:
+      elasticsearch:
+          condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - docker/docker.env
+    restart: always
+    networks:
+      - default
+
+  backend:
+    container_name: 'Chat_API'
+    build: .
+    command: /app/docker/entrypoints/chat.sh
+    ports:
+      - '8080:8080'
+    env_file:
+      - docker/docker.env
+    volumes:
+      - .:/app
+    depends_on:
+      mariadb:
+          condition: service_healthy
+      elasticsearch:
+          condition: service_healthy
+      redis:
+        condition: service_healthy
+      sidekiq:
+        condition: service_started
+    restart: always
+    networks:
+      - default
+
+volumes:
+  mariadb_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+  redis_data:
+    driver: local
