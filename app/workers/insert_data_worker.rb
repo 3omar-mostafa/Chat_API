@@ -1,7 +1,7 @@
 class InsertDataWorker < ApplicationWorker
   def perform(klass, params)
-    Sidekiq::Logging.logger.info "Inserting: #{klass} #{params}"
-    Sidekiq::Logging.logger.info "************************************************************"
+    Sidekiq.logger.info "Inserting: #{klass} #{params}"
+    Sidekiq.logger.info "************************************************************"
 
     klass = eval klass
     params = eval params

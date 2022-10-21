@@ -1,7 +1,7 @@
 class DeleteDataWorker < ApplicationWorker
   def perform(klass, id)
-    Sidekiq::Logging.logger.info "Deleting: #{klass} #{id}"
-    Sidekiq::Logging.logger.info "************************************************************"
+    Sidekiq.logger.info "Deleting: #{klass} #{id}"
+    Sidekiq.logger.info "************************************************************"
 
     klass = eval klass
     klass.destroy(id)
