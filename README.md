@@ -49,7 +49,7 @@ Application is dockerized, all you need is to have `docker-compose`
     cd Chat_API
     docker-compose up -d
     ```
-3. The API is now served by `http://locathost:8080` by default
+3. The API is now served at `http://localhost:8080` by default
 
 4. Testing `[OPTIONAL]`
 
