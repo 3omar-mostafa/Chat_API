@@ -5,10 +5,14 @@ class Message < ApplicationRecord
 
   validates :content, presence: true
 
-  # Create the index for this model
+  # Create elasticsearch index for this model
   include Elasticsearch::Model
   # Update the Elasticsearch index when a message is created or updated or deleted
   include Elasticsearch::Model::Callbacks
+
+  # Create different elasticsearch index name for each environment
+  # This is to avoid conflicts when running tests
+  index_name [Rails.env, 'messages'].join('_')
 
   settings index: { number_of_shards: 1 } do
     mappings dynamic: false do

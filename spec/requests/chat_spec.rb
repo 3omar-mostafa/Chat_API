@@ -7,7 +7,7 @@ RSpec.describe "Chats", type: :request do
     BASE_URL = "/api/v1/applications/#{@chat_app.token}/chats"
   end
 
-  describe "GET /index" do
+  describe "GET /" do
     it "returns http success with no data" do
       get "#{BASE_URL}/"
       expect(response).to have_http_status(:ok)

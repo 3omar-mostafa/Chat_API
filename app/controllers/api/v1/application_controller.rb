@@ -47,7 +47,7 @@ class Api::V1::ApplicationController < ActionController::API
 
     def set_message
       @message ||= @chat.messages.find_by_message_id(params[:message_id])
-      unless @chat
+      unless @message
         raise ActiveRecord::RecordNotFound, "Message '#{params[:message_id]}' is not found"
       end
     end
