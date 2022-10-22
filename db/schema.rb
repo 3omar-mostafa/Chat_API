@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_17_165901) do
+ActiveRecord::Schema.define(version: 2022_10_22_163432) do
 
   create_table "chat", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "chat_id", null: false
     t.bigint "chat_application_id", null: false
     t.string "name", null: false
     t.integer "messages_count", default: 0
+    t.index ["chat_application_id", "chat_id"], name: "index_chat_on_chat_application_id_and_chat_id", unique: true
     t.index ["chat_application_id"], name: "fk_rails_dd4d19dd30"
-    t.index ["chat_id", "chat_application_id"], name: "index_chat_on_chat_id_and_chat_application_id", unique: true
   end
 
   create_table "chat_application", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -34,8 +34,8 @@ ActiveRecord::Schema.define(version: 2022_10_17_165901) do
     t.text "content", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["chat_id", "message_id"], name: "index_message_on_chat_id_and_message_id", unique: true
     t.index ["chat_id"], name: "fk_rails_b7d36e3cb1"
-    t.index ["message_id", "chat_id"], name: "index_message_on_message_id_and_chat_id", unique: true
   end
 
   add_foreign_key "chat", "chat_application", on_delete: :cascade
