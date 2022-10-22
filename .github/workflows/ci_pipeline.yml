@@ -1,0 +1,136 @@
+name: CI Pipeline
+
+on:
+  push:
+
+env:
+  CLICOLOR: 1
+  CLI_COLOR: 1
+  CLICOLOR_FORCE: 'yes'
+  CLI_COLOR_FORCE: 'yes'
+  force_color_prompt: 'yes'
+  color_prompt: 'yes'
+  TERM: 'xterm-256color'
+  BASE_URL: 'http://localhost:8080/api/v1'
+
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: |
+          echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> ./docker/docker.env
+          docker-compose up -d
+      
+      - name: List Resources
+        if: always()
+        run: |
+          echo "Docker Containers"
+          docker container ls -a
+          echo "**************************************************"
+
+          echo "Host System Memory"
+          free -h
+          echo "**************************************************"
+
+          echo "Containers Resources"
+          docker stats --all --no-stream
+          echo "**************************************************"
+
+      - name: Wait for server to be ready
+        run: sleep 15
+
+      - name: Basic test of production
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          echo "Create a Chat Application"
+          curl -s -f "$BASE_URL/applications" -X POST --data name=chat_app1 -o chat_app1.json
+          cat chat_app1.json | jq --color-output
+          echo "**************************************************"
+          
+          token=$(cat chat_app1.json | jq -r '.data.token')
+          echo "Token: $token"
+          echo "CHAT_APP_TOKEN=${token}" >> $GITHUB_ENV
+          echo "**************************************************"
+          
+          echo "Create a Chat"
+          curl -s -f "$BASE_URL/applications/$token/chats" -X POST --data name=chat_1 | jq --color-output
+          echo "**************************************************"
+          
+          echo "Create a Message (msg1)"
+          curl -s -f "$BASE_URL/applications/$token/chats/1/messages" -X POST --data content=msg1 | jq --color-output
+          echo "**************************************************"
+          
+          echo "Create a Message (msg2)"
+          curl -s -f "$BASE_URL/applications/$token/chats/1/messages" -X POST --data content=msg2 | jq --color-output
+          echo "**************************************************"
+          
+          echo "Create a Message (abc)"
+          curl -s -f "$BASE_URL/applications/$token/chats/1/messages" -X POST --data content=abc | jq --color-output
+          echo "**************************************************"
+          
+          sleep 1 # data take time to be persisted
+
+          echo "Get all Messages containing 'msg'"
+          curl -s -f "$BASE_URL/applications/$token/chats/1/messages?q=msg" | jq --color-output
+          echo "**************************************************"
+
+          echo "Get all Messages containing 'abc'"
+          curl -s -f "$BASE_URL/applications/$token/chats/1/messages?q=abc" | jq --color-output
+          echo "**************************************************"
+      
+      - name: View Docker Logs
+        if: always()
+        run: docker-compose logs || true
+      
+      - name: Production Logs
+        if: always()
+        run: cat log/production.log || true
+      
+      - name: Development Logs
+        if: always()
+        run: cat log/development.log|| true
+      
+      - name: Restart Docker Containers (To Test Persistance)
+        run: |
+          docker-compose down
+          docker-compose up -d
+      
+      - name: Wait for server to be ready
+        run: sleep 15
+      
+      - name: Test Database Persistance
+        shell: bash -l -e -o pipefail {0}
+        run: |
+          echo "Get Created Chat Application"
+          curl -s -f "$BASE_URL/applications/${{ env.CHAT_APP_TOKEN }}/" | jq --color-output
+          echo "**************************************************"
+
+
+  test:
+    name: "Test"
+    runs-on: ubuntu-22.04
+    needs: [build]
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: docker-compose build
+
+      - name: Run Rspec Tests
+        run: docker-compose run backend /app/docker/entrypoints/test.sh
+
+      - name: Docker Logs
+        if: always()
+        run: docker-compose logs || true
+      
+      - name: Test Logs
+        if: always()
+        run: cat log/test.log || true
+      
