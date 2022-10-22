@@ -160,7 +160,11 @@ RSpec.describe "Messages", type: :request do
   describe "DELETE /:message_id" do
     it "returns http success with data" do
       message = FactoryBot.create(:message, chat: @chat).as_json
-      delete "#{BASE_URL}/#{message['message_id']}"
+
+      expect { delete "#{BASE_URL}/#{message['message_id']}" }
+      .to not_change { ChatApplication.count }
+      .and not_change { Chat.count }
+
       expect(response).to have_http_status(:ok)
       data = JSON.parse(response.body)
       expect(data['status']).to eq('success')
@@ -174,4 +178,5 @@ RSpec.describe "Messages", type: :request do
     end
 
   end
+
 end

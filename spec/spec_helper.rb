@@ -20,6 +20,10 @@
 require 'sidekiq/testing'
 Sidekiq::Testing.inline!
 
+# Define some negative matchers for RSpec
+RSpec::Matchers.define_negated_matcher :not_change, :change
+RSpec::Matchers.define_negated_matcher :not_include, :include
+RSpec::Matchers.define_negated_matcher :not_eq, :eq
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

@@ -109,6 +109,22 @@ RSpec.describe "ChatApplications", type: :request do
       data = JSON.parse(response.body)
       expect(data['status']).to eq('error')
     end
+
+    it "returns http success and cascade delete" do
+      chat_app = FactoryBot.create(:chat_application)
+      chat = FactoryBot.create(:chat, chat_application: chat_app)
+      message = FactoryBot.create(:message, chat: chat)
+
+      expect { delete "#{BASE_URL}/#{chat_app['token']}" }
+      .to change { ChatApplication.count }.to(0)
+      .and change { Chat.count }.to(0)
+      .and change { Message.count }.to(0)
+
+      expect(response).to have_http_status(:ok)
+      data = JSON.parse(response.body)
+      expect(data['status']).to eq('success')
+    end
+
   end
 
 end
