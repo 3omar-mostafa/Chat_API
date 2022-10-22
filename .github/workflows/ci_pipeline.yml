@@ -24,7 +24,8 @@ jobs:
 
       - name: Build
         run: |
-          echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> ./docker/docker.env
+          # echo "RAILS_ENV=production" >> ./docker/docker.env
+          # echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> ./docker/docker.env
           docker-compose up -d
       
       - name: List Resources
