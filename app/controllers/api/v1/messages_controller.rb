@@ -6,7 +6,7 @@ class Api::V1::MessagesController < Api::V1::ApplicationController
 
   # GET /applications/:token/chats/:chat_id/messages
   def index
-    if params!(:q).blank?
+    if params[:q].blank?
       render json: @messages = @chat.messages, status: :ok
     else
       query = {
