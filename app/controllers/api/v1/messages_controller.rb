@@ -6,11 +6,15 @@ class Api::V1::MessagesController < Api::V1::ApplicationController
 
   # GET /applications/:token/chats/:chat_id/messages
   def index
-    query = {
-      q: params[:q],
-      chat_id: @chat.id
-    }
-    render json: Message.search(query), status: :ok
+    if params!(:q).blank?
+      render json: @messages = @chat.messages, status: :ok
+    else
+      query = {
+        q: params[:q],
+        chat_id: @chat.id
+      }
+      render json: Message.search(query), status: :ok
+    end
   end
 
   # GET /applications/:token/chats/:chat_id/messages/:message_id

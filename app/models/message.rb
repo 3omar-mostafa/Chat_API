@@ -36,32 +36,22 @@ class Message < ApplicationRecord
 
   def self.search(query, options = {})
 
-    if query[:q].blank?
-      @search_definition = {
-        query: {
-          match: {
-            chat_id: query[:chat_id]
-          }
-        }
-      }
-    else
-      @search_definition = {
-        query: {
-          bool: {
-            must: [
-              {
-                wildcard: {
-                  content: "*#{query[:q]}*",
-                },
+    @search_definition = {
+      query: {
+        bool: {
+          must: [
+            {
+              wildcard: {
+                content: "*#{query[:q]}*",
               },
-              match: {
-                chat_id: query[:chat_id]
-              }
-            ]
-          }
+            },
+            match: {
+              chat_id: query[:chat_id]
+            }
+          ]
         }
       }
-    end
+    }
 
     @search_definition[:_source] = [:message_id, :content]
     result = __elasticsearch__.search(@search_definition)
